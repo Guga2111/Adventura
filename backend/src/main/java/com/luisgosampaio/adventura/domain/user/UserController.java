@@ -1,4 +1,4 @@
-package domain.user;
+package com.luisgosampaio.adventura.domain.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

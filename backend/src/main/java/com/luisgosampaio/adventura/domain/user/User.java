@@ -1,4 +1,4 @@
-package domain.user;
+package com.luisgosampaio.adventura.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;

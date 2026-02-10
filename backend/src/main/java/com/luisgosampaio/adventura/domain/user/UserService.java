@@ -1,4 +1,4 @@
-package domain.user;
+package com.luisgosampaio.adventura.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,7 +24,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with email: " + email + " does not exists")); // UserNotFoundException
     }
 
-    @Transactional(timeout = 10)
+    @Transactional
     public User saveUser (User user) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
