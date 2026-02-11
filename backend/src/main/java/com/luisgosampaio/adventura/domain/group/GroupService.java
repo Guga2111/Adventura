@@ -24,7 +24,7 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<Group> getGroups () {
+    public List<Group> getAllGroups () {
         return groupRepository.findAll();
     }
 

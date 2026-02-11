@@ -22,7 +22,7 @@ public class GroupController {
 
     @GetMapping
     public ResponseEntity<List<Group>> getGroups () {
-        return new ResponseEntity<>(groupService.getGroups(), HttpStatus.OK);
+        return new ResponseEntity<>(groupService.getAllGroups(), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}")
