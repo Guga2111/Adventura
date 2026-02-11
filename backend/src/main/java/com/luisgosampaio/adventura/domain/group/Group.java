@@ -1,5 +1,6 @@
 package com.luisgosampaio.adventura.domain.group;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.luisgosampaio.adventura.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,10 +31,12 @@ public class Group {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "created_by", nullable = false)
-    private Long createdById;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<GroupMember> members = new ArrayList<>();
 
     @CreationTimestamp

@@ -1,5 +1,6 @@
 package com.luisgosampaio.adventura.domain.group;
 
+import com.luisgosampaio.adventura.domain.user.User;
 import com.luisgosampaio.adventura.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class GroupService {
         List<GroupMember> memberships = memberRepository.findByUserId(userId);
 
         List<Long> groupIds = memberships.stream()
-                .map(GroupMember::getGroupId)
+                .map(gm -> gm.getGroup().getId())
                 .toList();
 
         return groupRepository.findAllById(groupIds);
@@ -42,16 +43,15 @@ public class GroupService {
     @Transactional
     public Group saveGroup (Group group, Long userId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        group.setCreatedById(userId);
+        group.setCreatedBy(user);
         Group savedGroup = groupRepository.save(group);
 
         GroupMember member = new GroupMember();
-        member.setGroupId(group.getId());
-        member.setUserId(userId);
+        member.setGroup(savedGroup);
+        member.setUser(user);
         member.setRole(GroupRole.ADMIN);
         memberRepository.save(member);
 
@@ -80,21 +80,19 @@ public class GroupService {
 
     @Transactional
     public GroupMember addMember(Long groupId, Long userId, GroupRole role) {
-        if (!groupRepository.existsById(groupId)) {
-            throw new RuntimeException("Group not found");
-        }
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (memberRepository.existsByGroupIdAndUserId(groupId, userId)) {
             throw new RuntimeException("User already member");
         }
 
         GroupMember member = new GroupMember();
-        member.setGroupId(groupId);
-        member.setUserId(userId);
+        member.setGroup(group);
+        member.setUser(user);
         member.setRole(role);
 
         return memberRepository.save(member);
