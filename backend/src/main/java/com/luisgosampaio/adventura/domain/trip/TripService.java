@@ -1,5 +1,7 @@
 package com.luisgosampaio.adventura.domain.trip;
 
+import com.luisgosampaio.adventura.domain.exceptions.GroupNotFoundException;
+import com.luisgosampaio.adventura.domain.exceptions.TripNotFoundException;
 import com.luisgosampaio.adventura.domain.group.Group;
 import com.luisgosampaio.adventura.domain.group.GroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,7 @@ public class TripService {
     @Transactional(readOnly = true)
     public Trip getTrip (Long id) {
         return tripRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new TripNotFoundException(id));
     }
 
     @Transactional(readOnly = true)
@@ -34,7 +36,7 @@ public class TripService {
     @Transactional
     public Trip createTrip (Trip trip, Long groupId) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         trip.setGroup(group);
         return tripRepository.save(trip);
@@ -43,7 +45,7 @@ public class TripService {
     @Transactional
     public Trip updateTrip (TripDTO tripDTO, Long id) {
         Trip trip = tripRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
+                .orElseThrow(() -> new TripNotFoundException(id));
 
         if (tripDTO.getDestiny() != null) trip.setDestiny(tripDTO.getDestiny());
         if (tripDTO.getDescription() != null) trip.setDescription(tripDTO.getDescription());

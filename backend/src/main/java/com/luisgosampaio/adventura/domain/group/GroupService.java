@@ -1,5 +1,9 @@
 package com.luisgosampaio.adventura.domain.group;
 
+import com.luisgosampaio.adventura.domain.exceptions.GroupNotFoundException;
+import com.luisgosampaio.adventura.domain.exceptions.MemberNotFoundException;
+import com.luisgosampaio.adventura.domain.exceptions.UserAlreadyMemberException;
+import com.luisgosampaio.adventura.domain.exceptions.UserNotFoundException;
 import com.luisgosampaio.adventura.domain.user.User;
 import com.luisgosampaio.adventura.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +24,7 @@ public class GroupService {
     @Transactional(readOnly = true)
     public Group getGroup (Long id) {
         return groupRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Group with id: " + id + " was not found in our records"));
+                .orElseThrow(() -> new GroupNotFoundException(id));
     }
 
     @Transactional(readOnly = true)
@@ -44,7 +48,7 @@ public class GroupService {
     public Group saveGroup (Group group, Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         group.setCreatedBy(user);
         Group savedGroup = groupRepository.save(group);
@@ -61,7 +65,7 @@ public class GroupService {
     @Transactional
     public Group updateGroup (Long id, Group groupInfo) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Group with id: " + id + " was not found in our records"));
+                .orElseThrow(() -> new GroupNotFoundException(id));
 
         group.setName(groupInfo.getName());
         group.setDescription(groupInfo.getDescription());
@@ -74,20 +78,20 @@ public class GroupService {
     public void deleteGroup (Long id) {
 
         Group group = groupRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Group with id: " + id + " was not found in our records"));
+                        .orElseThrow(() -> new GroupNotFoundException(id));
         groupRepository.delete(group);
     }
 
     @Transactional
     public GroupMember addMember(Long groupId, Long userId, GroupRole role) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         if (memberRepository.existsByGroupIdAndUserId(groupId, userId)) {
-            throw new RuntimeException("User already member");
+            throw new UserAlreadyMemberException(groupId, userId);
         }
 
         GroupMember member = new GroupMember();
@@ -101,7 +105,7 @@ public class GroupService {
     @Transactional
     public void removeMember(Long groupId, Long userId) {
         GroupMember member = memberRepository.findByUserIdAndGroupId(userId, groupId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() -> new MemberNotFoundException(groupId, userId));
 
         memberRepository.delete(member);
     }
@@ -109,7 +113,7 @@ public class GroupService {
     @Transactional(readOnly = true)
     public List<GroupMember> getMembers(Long groupId) {
         if (!groupRepository.existsById(groupId)) {
-            throw new RuntimeException("Group not found");
+            throw new GroupNotFoundException(groupId);
         }
 
         return memberRepository.findByGroupId(groupId);
