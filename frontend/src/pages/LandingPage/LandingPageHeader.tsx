@@ -1,5 +1,5 @@
 import { Menu, X } from "lucide-react"
-import AdventuraIcon from "../common/AdventuraIcon"
+import AdventuraIcon from "../../components/common/AdventuraIcon"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
