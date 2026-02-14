@@ -4,11 +4,12 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class TripDTO {
 
-    private String destiny;
+    private List<String> destinations;
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;

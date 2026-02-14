@@ -30,12 +30,12 @@ public class TripController {
     }
 
     @PostMapping("/group/{groupId}")
-    public ResponseEntity<Trip> createTrip (Trip trip, Long groupId) {
+    public ResponseEntity<Trip> createTrip (@RequestBody Trip trip, @PathVariable Long groupId) {
         return new ResponseEntity<>(tripService.createTrip(trip, groupId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Trip> updateTrip (TripDTO tripDTO, @PathVariable Long id) {
+    public ResponseEntity<Trip> updateTrip (@RequestBody TripDTO tripDTO, @PathVariable Long id) {
         return new ResponseEntity<>(tripService.updateTrip(tripDTO, id), HttpStatus.OK);
     }
 

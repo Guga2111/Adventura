@@ -12,6 +12,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,8 +32,15 @@ public class Trip {
     @JsonIgnoreProperties({"members"})
     private Group group;
 
-    @Column(name = "destiny", nullable = false)
-    private String destiny;
+    @ElementCollection
+    @CollectionTable(name = "trip_destinations", joinColumns = @JoinColumn(name = "trip_id"))
+    @Column(name = "destination")
+    private List<String> destinations = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "trip_country_codes", joinColumns = @JoinColumn(name = "trip_id"))
+    @Column(name = "country_code")
+    private List<String> countryCodes = new ArrayList<>();
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;

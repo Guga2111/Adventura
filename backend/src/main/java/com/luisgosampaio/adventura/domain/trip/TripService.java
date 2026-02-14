@@ -16,6 +16,7 @@ public class TripService {
 
     private final TripRepository tripRepository;
     private final GroupRepository groupRepository;
+    private final UnsplashService unsplashService;
 
     @Transactional(readOnly = true)
     public Trip getTrip (Long id) {
@@ -39,6 +40,13 @@ public class TripService {
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         trip.setGroup(group);
+        trip.setCountryCodes(CountryCodeMapper.toCodes(trip.getDestinations()));
+
+        if (!trip.getDestinations().isEmpty()) {
+            String coverUrl = unsplashService.fetchCoverImageUrl(trip.getDestinations().get(0));
+            trip.setCoverImageUrl(coverUrl);
+        }
+
         return tripRepository.save(trip);
     }
 
@@ -47,7 +55,10 @@ public class TripService {
         Trip trip = tripRepository.findById(id)
                 .orElseThrow(() -> new TripNotFoundException(id));
 
-        if (tripDTO.getDestiny() != null) trip.setDestiny(tripDTO.getDestiny());
+        if (tripDTO.getDestinations() != null) {
+            trip.setDestinations(tripDTO.getDestinations());
+            trip.setCountryCodes(CountryCodeMapper.toCodes(tripDTO.getDestinations()));
+        }
         if (tripDTO.getDescription() != null) trip.setDescription(tripDTO.getDescription());
         if (tripDTO.getStartDate() != null) trip.setStartDate(tripDTO.getStartDate());
         if (tripDTO.getEndDate() != null) trip.setEndDate(tripDTO.getEndDate());
