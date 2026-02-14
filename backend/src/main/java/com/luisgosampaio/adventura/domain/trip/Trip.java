@@ -36,6 +36,9 @@ public class Trip {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "excursions_count")
+    private int excursionCount;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -51,6 +54,9 @@ public class Trip {
     @Enumerated(EnumType.STRING)
     @Column(name = "status",length = 20)
     private TripStatus status = TripStatus.PLANNING;
+
+    @Column(name = "cover_image_url")
+    private String coverImageUrl;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
