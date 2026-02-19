@@ -39,11 +39,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
             String userPrincipal = decodedJWT.getSubject();
             String role = decodedJWT.getClaim("role").asString();
+            Long userId = decodedJWT.getClaim("userId").asLong();
 
             List<SimpleGrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority("ROLE_" + role)
             );
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
+            authentication.setDetails(userId);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (JWTVerificationException e) {

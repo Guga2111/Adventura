@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -56,7 +57,7 @@ class TripControllerTest {
         trip = new Trip();
         trip.setId(1L);
         trip.setGroup(group);
-        trip.setDestiny("Tokyo");
+        trip.setDestinations(List.of("Tokyo"));
         trip.setDescription("Trip to Japan");
         trip.setStartDate(LocalDate.of(2026, 6, 1));
         trip.setEndDate(LocalDate.of(2026, 6, 15));
@@ -71,7 +72,7 @@ class TripControllerTest {
 
         mockMvc.perform(get("/trip/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.destiny").value("Tokyo"))
+                .andExpect(jsonPath("$.destinations[0]").value("Tokyo"))
                 .andExpect(jsonPath("$.status").value("PLANNING"));
     }
 
@@ -90,7 +91,7 @@ class TripControllerTest {
 
         mockMvc.perform(get("/trip/group/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].destiny").value("Tokyo"));
+                .andExpect(jsonPath("$[0].destinations[0]").value("Tokyo"));
     }
 
     @Test
@@ -99,48 +100,59 @@ class TripControllerTest {
 
         mockMvc.perform(get("/trip"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].destiny").value("Tokyo"));
+                .andExpect(jsonPath("$[0].destinations[0]").value("Tokyo"));
     }
 
     @Test
     void createTrip_ReturnsCreated() throws Exception {
-        when(tripService.createTrip(any(Trip.class), any())).thenReturn(trip);
+        when(tripService.createTrip(any(Trip.class), eq(1L), eq(1L))).thenReturn(trip);
 
-        mockMvc.perform(post("/trip/group/1"))
+        mockMvc.perform(post("/trip/group/1/user/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(trip)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void createTrip_ThrowsGroupNotFoundException() {
-        when(tripService.createTrip(any(Trip.class), any())).thenThrow(new GroupNotFoundException(99L));
+        when(tripService.createTrip(any(Trip.class), eq(99L), eq(1L))).thenThrow(new GroupNotFoundException(99L));
 
-        assertThatThrownBy(() -> mockMvc.perform(post("/trip/group/99")))
+        assertThatThrownBy(() -> mockMvc.perform(post("/trip/group/99/user/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(trip))))
                 .cause()
                 .isInstanceOf(GroupNotFoundException.class);
     }
 
     @Test
     void updateTrip_ReturnsOk() throws Exception {
-        when(tripService.updateTrip(any(TripDTO.class), eq(1L))).thenReturn(trip);
+        when(tripService.updateTrip(any(TripDTO.class), eq(1L), eq(1L))).thenReturn(trip);
 
-        mockMvc.perform(put("/trip/1"))
+        TripDTO dto = new TripDTO();
+        dto.setDescription("Updated");
+        mockMvc.perform(put("/trip/1/user/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
     }
 
     @Test
     void updateTrip_ThrowsTripNotFoundException() {
-        when(tripService.updateTrip(any(TripDTO.class), eq(99L))).thenThrow(new TripNotFoundException(99L));
+        when(tripService.updateTrip(any(TripDTO.class), eq(99L), eq(1L))).thenThrow(new TripNotFoundException(99L));
 
-        assertThatThrownBy(() -> mockMvc.perform(put("/trip/99")))
+        TripDTO dto = new TripDTO();
+        assertThatThrownBy(() -> mockMvc.perform(put("/trip/99/user/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto))))
                 .cause()
                 .isInstanceOf(TripNotFoundException.class);
     }
 
     @Test
     void deleteTrip_ReturnsNoContent() throws Exception {
-        doNothing().when(tripService).deleteTrip(1L);
+        doNothing().when(tripService).deleteTrip(1L, 1L);
 
-        mockMvc.perform(delete("/trip/1"))
+        mockMvc.perform(delete("/trip/1/user/1"))
                 .andExpect(status().isNoContent());
     }
 }

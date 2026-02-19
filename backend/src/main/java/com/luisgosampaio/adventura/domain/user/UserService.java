@@ -29,12 +29,13 @@ public class UserService {
     @Transactional
     public User saveUser (User user) {
 
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail().toLowerCase())) {
             throw new EmailAlreadyExistsException(user.getEmail());
         }
 
         user.setEmail(user.getEmail().toLowerCase());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setRole("USER");
 
         return userRepository.save(user);
     }

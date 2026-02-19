@@ -1,11 +1,15 @@
 package com.luisgosampaio.adventura.domain.group;
 
 import com.luisgosampaio.adventura.domain.exceptions.GroupNotFoundException;
+import com.luisgosampaio.adventura.domain.exceptions.LastGroupAdminException;
 import com.luisgosampaio.adventura.domain.exceptions.MemberNotFoundException;
+import com.luisgosampaio.adventura.domain.exceptions.LastGroupMemberException;
+import com.luisgosampaio.adventura.domain.exceptions.UnauthorizedGroupActionException;
 import com.luisgosampaio.adventura.domain.exceptions.UserAlreadyMemberException;
 import com.luisgosampaio.adventura.domain.exceptions.UserNotFoundException;
 import com.luisgosampaio.adventura.domain.user.User;
 import com.luisgosampaio.adventura.domain.user.UserRepository;
+import com.luisgosampaio.adventura.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +38,8 @@ public class GroupService {
 
     @Transactional(readOnly = true)
     public List<Group> getMyGroups (Long userId) {
+        SecurityUtils.verifyAuthenticatedUser(userId);
+
         List<GroupMember> memberships = memberRepository.findByUserId(userId);
 
         List<Long> groupIds = memberships.stream()
@@ -46,6 +52,8 @@ public class GroupService {
 
     @Transactional
     public Group saveGroup (Group group, Long userId) {
+
+        SecurityUtils.verifyAuthenticatedUser(userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -63,7 +71,16 @@ public class GroupService {
     }
 
     @Transactional
-    public Group updateGroup (Long id, Group groupInfo) {
+    public Group updateGroup (Long id, Group groupInfo, Long userId) {
+        SecurityUtils.verifyAuthenticatedUser(userId);
+
+        GroupMember member = memberRepository.findByUserIdAndGroupId(userId, id)
+                .orElseThrow(() -> new MemberNotFoundException(id, userId));
+
+        if (member.getRole() != GroupRole.ADMIN) {
+            throw new UnauthorizedGroupActionException(id, userId);
+        }
+
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new GroupNotFoundException(id));
 
@@ -75,15 +92,31 @@ public class GroupService {
     }
 
     @Transactional
-    public void deleteGroup (Long id) {
-
+    public void deleteGroup (Long id, Long userId) {
+        SecurityUtils.verifyAuthenticatedUser(userId);
         Group group = groupRepository.findById(id)
                         .orElseThrow(() -> new GroupNotFoundException(id));
+
+        GroupMember member = memberRepository.findByUserIdAndGroupId(userId, id)
+                .orElseThrow(() -> new MemberNotFoundException(id, userId));
+
+        if (member.getRole() != GroupRole.ADMIN) {
+            throw new UnauthorizedGroupActionException(id, userId);
+        }
+
         groupRepository.delete(group);
     }
 
     @Transactional
-    public GroupMember addMember(Long groupId, Long userId, GroupRole role) {
+    public GroupMember addMember(Long groupId, Long userId, GroupRole role, Long requestedByUserId) {
+        SecurityUtils.verifyAuthenticatedUser(requestedByUserId);
+        GroupMember requester = memberRepository.findByUserIdAndGroupId(requestedByUserId, groupId)
+                .orElseThrow(() -> new MemberNotFoundException(groupId, requestedByUserId));
+
+        if (requester.getRole() != GroupRole.ADMIN) {
+            throw new UnauthorizedGroupActionException(groupId, requestedByUserId);
+        }
+
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
 
@@ -103,11 +136,31 @@ public class GroupService {
     }
 
     @Transactional
-    public void removeMember(Long groupId, Long userId) {
-        GroupMember member = memberRepository.findByUserIdAndGroupId(userId, groupId)
-                .orElseThrow(() -> new MemberNotFoundException(groupId, userId));
+    public void removeMember(Long groupId, Long targetUserId, Long requestedByUserId) {
+        SecurityUtils.verifyAuthenticatedUser(requestedByUserId);
+        GroupMember requester = memberRepository.findByUserIdAndGroupId(requestedByUserId, groupId)
+                .orElseThrow(() -> new MemberNotFoundException(groupId, requestedByUserId));
 
-        memberRepository.delete(member);
+        if (requester.getRole() != GroupRole.ADMIN) {
+            throw new UnauthorizedGroupActionException(groupId, requestedByUserId);
+        }
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
+
+        if (group.getMembers().size() <= 1) {
+            throw new LastGroupMemberException(groupId);
+        }
+
+        GroupMember target = memberRepository.findByUserIdAndGroupId(targetUserId, groupId)
+                .orElseThrow(() -> new MemberNotFoundException(groupId, targetUserId));
+
+        if (target.getRole() == GroupRole.ADMIN
+                && memberRepository.countByGroupIdAndRole(groupId, GroupRole.ADMIN) <= 1) {
+            throw new LastGroupAdminException(groupId);
+        }
+
+        group.getMembers().remove(target);
     }
 
     @Transactional(readOnly = true)

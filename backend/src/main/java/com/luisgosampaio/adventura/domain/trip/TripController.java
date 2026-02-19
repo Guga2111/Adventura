@@ -29,19 +29,19 @@ public class TripController {
         return new ResponseEntity<>(tripService.getAllTrips(), HttpStatus.OK);
     }
 
-    @PostMapping("/group/{groupId}")
-    public ResponseEntity<Trip> createTrip (@RequestBody Trip trip, @PathVariable Long groupId) {
-        return new ResponseEntity<>(tripService.createTrip(trip, groupId), HttpStatus.CREATED);
+    @PostMapping("/group/{groupId}/user/{userId}")
+    public ResponseEntity<Trip> createTrip (@RequestBody Trip trip, @PathVariable Long groupId, @PathVariable Long userId) {
+        return new ResponseEntity<>(tripService.createTrip(trip, groupId, userId), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Trip> updateTrip (@RequestBody TripDTO tripDTO, @PathVariable Long id) {
-        return new ResponseEntity<>(tripService.updateTrip(tripDTO, id), HttpStatus.OK);
+    @PutMapping("/{id}/user/{userId}")
+    public ResponseEntity<Trip> updateTrip (@RequestBody TripDTO tripDTO, @PathVariable Long id, @PathVariable Long userId) {
+        return new ResponseEntity<>(tripService.updateTrip(tripDTO, id, userId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrip (@PathVariable Long id) {
-        tripService.deleteTrip(id);
+    @DeleteMapping("/{id}/user/{userId}")
+    public ResponseEntity<Void> deleteTrip (@PathVariable Long id, @PathVariable Long userId) {
+        tripService.deleteTrip(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

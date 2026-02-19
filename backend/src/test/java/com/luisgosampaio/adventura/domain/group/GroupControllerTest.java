@@ -98,7 +98,7 @@ class GroupControllerTest {
     void saveGroup_ReturnsCreated() throws Exception {
         when(groupService.saveGroup(any(Group.class), eq(1L))).thenReturn(group);
 
-        mockMvc.perform(post("/group/1")
+        mockMvc.perform(post("/group/user/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(group)))
                 .andExpect(status().isCreated())
@@ -109,7 +109,7 @@ class GroupControllerTest {
     void saveGroup_ThrowsUserNotFoundException() {
         when(groupService.saveGroup(any(Group.class), eq(99L))).thenThrow(new UserNotFoundException(99L));
 
-        assertThatThrownBy(() -> mockMvc.perform(post("/group/99")
+        assertThatThrownBy(() -> mockMvc.perform(post("/group/user/99")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(group))))
                 .cause()
@@ -118,9 +118,9 @@ class GroupControllerTest {
 
     @Test
     void updateGroup_ReturnsOk() throws Exception {
-        when(groupService.updateGroup(eq(1L), any(Group.class))).thenReturn(group);
+        when(groupService.updateGroup(eq(1L), any(Group.class), eq(1L))).thenReturn(group);
 
-        mockMvc.perform(put("/group/1")
+        mockMvc.perform(put("/group/1/user/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(group)))
                 .andExpect(status().isOk());
@@ -128,9 +128,9 @@ class GroupControllerTest {
 
     @Test
     void deleteGroup_ReturnsNoContent() throws Exception {
-        doNothing().when(groupService).deleteGroup(1L);
+        doNothing().when(groupService).deleteGroup(1L, 1L);
 
-        mockMvc.perform(delete("/group/1"))
+        mockMvc.perform(delete("/group/1/user/1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -163,26 +163,26 @@ class GroupControllerTest {
 
     @Test
     void addMember_ReturnsCreated() throws Exception {
-        when(groupService.addMember(1L, 2L, GroupRole.MEMBER)).thenReturn(member);
+        when(groupService.addMember(1L, 2L, GroupRole.MEMBER, 1L)).thenReturn(member);
 
-        mockMvc.perform(post("/group/1/user/2").param("role", "MEMBER"))
+        mockMvc.perform(post("/group/1/user/2/requested-by/1").param("role", "MEMBER"))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void addMember_ThrowsUserAlreadyMemberException() {
-        when(groupService.addMember(1L, 1L, GroupRole.MEMBER)).thenThrow(new UserAlreadyMemberException(1L, 1L));
+        when(groupService.addMember(1L, 1L, GroupRole.MEMBER, 1L)).thenThrow(new UserAlreadyMemberException(1L, 1L));
 
-        assertThatThrownBy(() -> mockMvc.perform(post("/group/1/user/1").param("role", "MEMBER")))
+        assertThatThrownBy(() -> mockMvc.perform(post("/group/1/user/1/requested-by/1").param("role", "MEMBER")))
                 .cause()
                 .isInstanceOf(UserAlreadyMemberException.class);
     }
 
     @Test
     void removeMember_ReturnsNoContent() throws Exception {
-        doNothing().when(groupService).removeMember(1L, 2L);
+        doNothing().when(groupService).removeMember(1L, 2L, 1L);
 
-        mockMvc.perform(delete("/group/1/member/2"))
+        mockMvc.perform(delete("/group/1/member/2/requested-by/1"))
                 .andExpect(status().isNoContent());
     }
 }

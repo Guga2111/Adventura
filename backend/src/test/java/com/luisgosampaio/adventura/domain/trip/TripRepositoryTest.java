@@ -52,7 +52,7 @@ class TripRepositoryTest {
 
         earlyTrip = new Trip();
         earlyTrip.setGroup(group);
-        earlyTrip.setDestiny("Tokyo");
+        earlyTrip.setDestinations(List.of("Tokyo"));
         earlyTrip.setDescription("Trip to Japan");
         earlyTrip.setStartDate(LocalDate.of(2026, 3, 1));
         earlyTrip.setEndDate(LocalDate.of(2026, 3, 15));
@@ -63,7 +63,7 @@ class TripRepositoryTest {
 
         lateTrip = new Trip();
         lateTrip.setGroup(group);
-        lateTrip.setDestiny("Paris");
+        lateTrip.setDestinations(List.of("Paris"));
         lateTrip.setDescription("Trip to France");
         lateTrip.setStartDate(LocalDate.of(2026, 8, 1));
         lateTrip.setEndDate(LocalDate.of(2026, 8, 15));
@@ -92,8 +92,8 @@ class TripRepositoryTest {
         List<Trip> trips = tripRepository.findByGroupIdOrderByStartDateDesc(group.getId());
 
         assertThat(trips).hasSize(2);
-        assertThat(trips.get(0).getDestiny()).isEqualTo("Paris");
-        assertThat(trips.get(1).getDestiny()).isEqualTo("Tokyo");
+        assertThat(trips.get(0).getDestinations()).containsExactly("Paris");
+        assertThat(trips.get(1).getDestinations()).containsExactly("Tokyo");
     }
 
     @Test

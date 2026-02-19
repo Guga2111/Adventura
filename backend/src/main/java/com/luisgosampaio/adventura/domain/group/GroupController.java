@@ -25,19 +25,19 @@ public class GroupController {
         return new ResponseEntity<>(groupService.getAllGroups(), HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/user/{userId}")
     public ResponseEntity<Group> saveGroup (@RequestBody Group group, @PathVariable Long userId) {
         return new ResponseEntity<>(groupService.saveGroup(group, userId), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Group> updateGroup (@RequestBody Group group, @PathVariable Long id) {
-        return new ResponseEntity<>(groupService.updateGroup(id, group), HttpStatus.OK);
+    @PutMapping("/{id}/user/{userId}")
+    public ResponseEntity<Group> updateGroup (@RequestBody Group group, @PathVariable Long id, @PathVariable Long userId) {
+        return new ResponseEntity<>(groupService.updateGroup(id, group, userId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMapping (@PathVariable Long id) {
-        groupService.deleteGroup(id);
+    @DeleteMapping("/{id}/user/{userId}")
+    public ResponseEntity<Void> deleteMapping (@PathVariable Long id, @PathVariable Long userId) {
+        groupService.deleteGroup(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -51,14 +51,14 @@ public class GroupController {
         return new ResponseEntity<>(groupService.getMembers(groupId), HttpStatus.OK);
     }
 
-    @PostMapping("/{groupId}/user/{userId}")
-    public ResponseEntity<GroupMember> addMember (@PathVariable Long groupId, @PathVariable Long userId, @RequestParam GroupRole role) {
-        return new ResponseEntity<>(groupService.addMember(groupId, userId, role), HttpStatus.CREATED);
+    @PostMapping("/{groupId}/user/{userId}/requested-by/{requestedByUserId}")
+    public ResponseEntity<GroupMember> addMember (@PathVariable Long groupId, @PathVariable Long userId, @RequestParam GroupRole role, @PathVariable Long requestedByUserId) {
+        return new ResponseEntity<>(groupService.addMember(groupId, userId, role, requestedByUserId), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{groupId}/member/{memberId}")
-    public ResponseEntity<Void> removeMember (@PathVariable Long groupId, @PathVariable Long memberId) {
-        groupService.removeMember(groupId, memberId);
+    @DeleteMapping("/{groupId}/member/{targetUserId}/requested-by/{requestedByUserId}")
+    public ResponseEntity<Void> removeMember (@PathVariable Long groupId, @PathVariable Long targetUserId, @PathVariable Long requestedByUserId) {
+        groupService.removeMember(groupId, targetUserId, requestedByUserId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
