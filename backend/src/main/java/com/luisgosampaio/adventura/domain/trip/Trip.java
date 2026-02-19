@@ -1,6 +1,8 @@
 package com.luisgosampaio.adventura.domain.trip;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.luisgosampaio.adventura.domain.excursion.Excursion;
 import com.luisgosampaio.adventura.domain.group.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,8 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -45,8 +46,12 @@ public class Trip {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Excursion> excursions = new ArrayList<>();
+
     @Column(name = "excursions_count")
-    private int excursionCount;
+    private Integer excursionCount = 0;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
