@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "group")
+@Table(name = "groups")
 public class Group {
 
     @Id
