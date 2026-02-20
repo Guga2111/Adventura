@@ -6,11 +6,13 @@ A travel co-plan app with web-sockets and springboot
 * Swagger
 * Spring Security
 * Jpa + Hibernate
-* docker compose + postgresql
+* Docker compose + Postgresql
 + Custom exceptions
 * Unit testing for all service, controller and repo
 * Usage of DTO
 * Spring Profiles
+* STOMP Protocol + Websocket
+* SockJS for browser that not support Websockets
 
 ## Frontend
 * React + Vite + TS + Tailwindcss
