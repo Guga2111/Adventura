@@ -13,6 +13,7 @@ A travel co-plan app with web-sockets and springboot
 * Spring Profiles
 * STOMP Protocol + Websocket
 * SockJS for browser that not support Websockets
+* Unsplash external API for handling photos url 
 
 ## Frontend
 * React + Vite + TS + Tailwindcss
