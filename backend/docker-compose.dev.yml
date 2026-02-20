@@ -1,5 +1,18 @@
 version: '3.8'
+
 services:
+  adventura-api-dev:
+    build: .
+    container_name: adventura_api_dev
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-dev:5432/adventura_db
+    depends_on:
+      - db-dev
+
   db-dev:
     image: postgres:15-alpine
     container_name: postgres_dev_container
