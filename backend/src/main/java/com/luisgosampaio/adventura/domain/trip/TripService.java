@@ -59,8 +59,7 @@ public class TripService {
         trip.setCountryCodes(CountryCodeMapper.toCodes(trip.getDestinations()));
 
         if (!trip.getDestinations().isEmpty()) {
-            String coverUrl = unsplashService.fetchCoverImageUrl(trip.getDestinations().get(0));
-            trip.setCoverImageUrl(coverUrl);
+            applyCoverPhoto(trip, trip.getDestinations().get(0));
         }
 
         return tripRepository.save(trip);
@@ -86,8 +85,7 @@ public class TripService {
             trip.setCountryCodes(CountryCodeMapper.toCodes(tripDTO.getDestinations()));
 
             if (!tripDTO.getDestinations().isEmpty()) {
-                String coverUrl = unsplashService.fetchCoverImageUrl(tripDTO.getDestinations().get(0));
-                trip.setCoverImageUrl(coverUrl);
+                applyCoverPhoto(trip, tripDTO.getDestinations().get(0));
             }
         }
         if (tripDTO.getDescription() != null) trip.setDescription(tripDTO.getDescription());
@@ -116,5 +114,14 @@ public class TripService {
         }
 
         tripRepository.delete(trip);
+    }
+
+    private void applyCoverPhoto(Trip trip, String destination) {
+        UnsplashPhotoData photo = unsplashService.fetchCoverPhoto(destination);
+        if (photo != null) {
+            trip.setCoverImageUrl(photo.imageUrl());
+            trip.setCoverImageAuthor(photo.authorName());
+            trip.setCoverImageAuthorUrl(photo.authorUrl());
+        }
     }
 }

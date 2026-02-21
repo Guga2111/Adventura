@@ -149,7 +149,8 @@ class TripServiceTest {
 
         when(memberRepository.findByUserIdAndGroupId(1L, 1L)).thenReturn(Optional.of(adminMember));
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
-        when(unsplashService.fetchCoverImageUrl("Paris")).thenReturn("https://unsplash.com/paris.jpg");
+        when(unsplashService.fetchCoverPhoto("Paris")).thenReturn(
+                new UnsplashPhotoData("https://unsplash.com/paris.jpg", "John Photo", "https://unsplash.com/@johnphoto", "https://api.unsplash.com/photos/1/download"));
         when(tripRepository.save(any(Trip.class))).thenReturn(trip);
 
         Trip result = tripService.createTrip(newTrip, 1L, 1L);
@@ -211,7 +212,8 @@ class TripServiceTest {
 
         when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
         when(memberRepository.findByUserIdAndGroupId(1L, 1L)).thenReturn(Optional.of(adminMember));
-        when(unsplashService.fetchCoverImageUrl("Kyoto")).thenReturn("https://unsplash.com/kyoto.jpg");
+        when(unsplashService.fetchCoverPhoto("Kyoto")).thenReturn(
+                new UnsplashPhotoData("https://unsplash.com/kyoto.jpg", "Jane Photo", "https://unsplash.com/@janephoto", "https://api.unsplash.com/photos/2/download"));
         when(tripRepository.save(any(Trip.class))).thenReturn(trip);
 
         Trip result = tripService.updateTrip(dto, 1L, 1L);
@@ -224,7 +226,9 @@ class TripServiceTest {
         assertThat(trip.getTotalBudget()).isEqualByComparingTo(new BigDecimal("20000.00"));
         assertThat(trip.getStatus()).isEqualTo(TripStatus.CONFIRMED);
         assertThat(trip.getCoverImageUrl()).isEqualTo("https://unsplash.com/kyoto.jpg");
-        verify(unsplashService).fetchCoverImageUrl("Kyoto");
+        assertThat(trip.getCoverImageAuthor()).isEqualTo("Jane Photo");
+        assertThat(trip.getCoverImageAuthorUrl()).isEqualTo("https://unsplash.com/@janephoto");
+        verify(unsplashService).fetchCoverPhoto("Kyoto");
         verify(tripRepository).save(trip);
     }
 
@@ -236,7 +240,8 @@ class TripServiceTest {
 
         when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
         when(memberRepository.findByUserIdAndGroupId(1L, 1L)).thenReturn(Optional.of(adminMember));
-        when(unsplashService.fetchCoverImageUrl("Kyoto")).thenReturn("https://unsplash.com/kyoto.jpg");
+        when(unsplashService.fetchCoverPhoto("Kyoto")).thenReturn(
+                new UnsplashPhotoData("https://unsplash.com/kyoto.jpg", "Jane Photo", "https://unsplash.com/@janephoto", "https://api.unsplash.com/photos/2/download"));
         when(tripRepository.save(any(Trip.class))).thenReturn(trip);
 
         tripService.updateTrip(dto, 1L, 1L);
@@ -259,7 +264,7 @@ class TripServiceTest {
 
         tripService.updateTrip(dto, 1L, 1L);
 
-        verify(unsplashService, never()).fetchCoverImageUrl(any());
+        verify(unsplashService, never()).fetchCoverPhoto(any());
     }
 
     @Test

@@ -72,6 +72,12 @@ public class Trip {
     @Column(name = "cover_image_url")
     private String coverImageUrl;
 
+    @Column(name = "cover_image_author")
+    private String coverImageAuthor;
+
+    @Column(name = "cover_image_author_url")
+    private String coverImageAuthorUrl;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
