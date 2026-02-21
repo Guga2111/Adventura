@@ -10,6 +10,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://db-dev:5432/adventura_db
+      UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
     depends_on:
       - db-dev
 
