@@ -1,6 +1,7 @@
 package com.luisgosampaio.adventura.domain.trip;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ public class UnsplashService {
     private static final Logger log = LoggerFactory.getLogger(UnsplashService.class);
 
     private final RestClient restClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final String accessKey;
 
     public UnsplashService(@Value("${unsplash.access-key}") String accessKey) {
@@ -24,11 +26,13 @@ public class UnsplashService {
 
     public UnsplashPhotoData fetchCoverPhoto(String destination) {
         try {
-            JsonNode response = restClient.get()
+            String responseBody = restClient.get()
                     .uri("/search/photos?query={query}&per_page=1", destination)
                     .header("Authorization", "Client-ID " + accessKey)
                     .retrieve()
-                    .body(JsonNode.class);
+                    .body(String.class);
+
+            JsonNode response = objectMapper.readTree(responseBody);
 
             if (response != null && response.has("results") && !response.get("results").isEmpty()) {
                 JsonNode photo = response.get("results").get(0);
