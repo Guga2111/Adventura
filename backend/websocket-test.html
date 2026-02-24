@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Excursion WebSocket Tester</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: monospace; background: #1a1a2e; color: #eee; padding: 20px; }
+    h2 { margin-bottom: 16px; color: #e94560; }
+
+    .config { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .config label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #aaa; }
+    .config input { background: #16213e; color: #eee; border: 1px solid #333; padding: 8px; border-radius: 4px; font-family: monospace; }
+    .config input#token { width: 400px; }
+
+    .buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    button { background: #e94560; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: monospace; font-weight: bold; }
+    button:hover { background: #c73650; }
+    button:disabled { background: #555; cursor: not-allowed; }
+    button.green { background: #0f9b58; }
+    button.green:hover { background: #0b7a45; }
+    button.blue { background: #1a73e8; }
+    button.blue:hover { background: #1558b0; }
+    button.orange { background: #e8860c; }
+    button.orange:hover { background: #b56a09; }
+
+    #log { background: #0f0f23; color: #0f0; padding: 16px; height: 350px; overflow-y: auto; border-radius: 8px; margin-bottom: 16px; white-space: pre-wrap; font-size: 13px; border: 1px solid #333; }
+    .log-error { color: #e94560; }
+    .log-sent { color: #f0c040; }
+    .log-received { color: #0f0; }
+    .log-info { color: #58a6ff; }
+
+    textarea { width: 100%; background: #16213e; color: #eee; border: 1px solid #333; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; resize: vertical; }
+
+    .presets { margin-bottom: 16px; }
+    .presets h3 { color: #58a6ff; margin-bottom: 8px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h2>Excursion WebSocket Tester</h2>
+
+  <div class="config">
+    <label>JWT Token <input id="token" type="text" placeholder="paste token here (without Bearer)"></label>
+    <label>Trip ID <input id="tripId" type="number" value="1" style="width:80px"></label>
+    <label>Username <input id="username" type="text" placeholder="your username"></label>
+  </div>
+
+  <div class="buttons">
+    <button class="green" onclick="connect()">Connect</button>
+    <button onclick="disconnect()" id="btnDisconnect" disabled>Disconnect</button>
+    <button onclick="clearLog()" style="background:#555">Clear Log</button>
+  </div>
+
+  <div id="log"></div>
+
+  <div class="presets">
+    <h3>Quick messages (click to load into editor):</h3>
+    <div class="buttons">
+      <button class="blue" onclick="loadPreset('add')">ADD</button>
+      <button class="blue" onclick="loadPreset('addWithPresence')">ADD + Presence</button>
+      <button class="orange" onclick="loadPreset('update')">UPDATE</button>
+      <button onclick="loadPreset('delete')">DELETE</button>
+      <button onclick="loadPreset('invalidPresence')" style="background:#555">Invalid Presence</button>
+      <button onclick="loadPreset('nonExistent')" style="background:#555">Non-existent ID</button>
+    </div>
+  </div>
+
+  <textarea id="msg" rows="8" placeholder="Paste or edit JSON message here, then click Send"></textarea>
+  <br/><br/>
+  <button class="green" onclick="sendMsg()" id="btnSend" disabled>Send Message</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script>
+    let client = null;
+    let connected = false;
+
+    const presets = {
+      add: {
+        action: "ADD",
+        name: "City Walking Tour",
+        price: 25.50,
+        startDate: "2026-07-15T10:00:00",
+        endDate: "2026-07-15T14:00:00",
+        presenceIds: []
+      },
+      addWithPresence: {
+        action: "ADD",
+        name: "Museum Visit",
+        price: 15.00,
+        startDate: "2026-07-16T09:00:00",
+        endDate: "2026-07-16T12:00:00",
+        presenceIds: [1, 2]
+      },
+      update: {
+        action: "UPDATE",
+        excursionId: 1,
+        name: "City Walking Tour - Updated",
+        price: 30.00
+      },
+      delete: {
+        action: "DELETE",
+        excursionId: 1
+      },
+      invalidPresence: {
+        action: "ADD",
+        name: "Sneaky Excursion",
+        price: 10.00,
+        startDate: "2026-07-17T10:00:00",
+        presenceIds: [9999]
+      },
+      nonExistent: {
+        action: "UPDATE",
+        excursionId: 99999,
+        name: "Does Not Exist"
+      }
+    };
+
+    function loadPreset(name) {
+      document.getElementById("msg").value = JSON.stringify(presets[name], null, 2);
+    }
+
+    function print(text, className) {
+      const log = document.getElementById("log");
+      const line = document.createElement("div");
+      line.className = className || "";
+      line.textContent = new Date().toLocaleTimeString() + " | " + text;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById("log").innerHTML = "";
+    }
+
+    function connect() {
+      const token = document.getElementById("token").value.trim();
+      const tripId = document.getElementById("tripId").value.trim();
+      const username = document.getElementById("username").value.trim();
+
+      if (!token || !tripId || !username) {
+        print("Fill in all fields (token, trip ID, username) before connecting.", "log-error");
+        return;
+      }
+
+      print("Connecting to ws://localhost:8080/ws ...", "log-info");
+
+      const socket = new SockJS("http://localhost:8080/ws");
+      client = Stomp.over(socket);
+
+      // disable noisy stomp.js debug logs
+      client.debug = null;
+
+      client.connect(
+        { Authorization: "Bearer " + token },
+        function () {
+          connected = true;
+          document.getElementById("btnSend").disabled = false;
+          document.getElementById("btnDisconnect").disabled = false;
+          print("CONNECTED successfully!", "log-info");
+
+          client.subscribe("/topic/trip/" + tripId + "/excursions", function (msg) {
+            try {
+              const body = JSON.parse(msg.body);
+              print("RECEIVED on topic:\n" + JSON.stringify(body, null, 2), "log-received");
+            } catch (e) {
+              print("RECEIVED (raw): " + msg.body, "log-received");
+            }
+          });
+
+          client.subscribe("/user/" + username + "/queue/errors", function (msg) {
+            print("ERROR from server: " + msg.body, "log-error");
+          });
+
+          print("Subscribed to /topic/trip/" + tripId + "/excursions", "log-info");
+          print("Subscribed to /user/" + username + "/queue/errors", "log-info");
+          print("Ready! Use the preset buttons or type JSON manually.", "log-info");
+        },
+        function (error) {
+          connected = false;
+          document.getElementById("btnSend").disabled = true;
+          document.getElementById("btnDisconnect").disabled = true;
+          print("CONNECTION FAILED: " + (error.headers ? error.headers.message : error), "log-error");
+        }
+      );
+    }
+
+    function disconnect() {
+      if (client && connected) {
+        client.disconnect(function () {
+          connected = false;
+          document.getElementById("btnSend").disabled = true;
+          document.getElementById("btnDisconnect").disabled = true;
+          print("Disconnected.", "log-info");
+        });
+      }
+    }
+
+    function sendMsg() {
+      if (!client || !connected) {
+        print("Not connected!", "log-error");
+        return;
+      }
+
+      const tripId = document.getElementById("tripId").value.trim();
+      const body = document.getElementById("msg").value.trim();
+
+      if (!body) {
+        print("Message is empty.", "log-error");
+        return;
+      }
+
+      try {
+        JSON.parse(body);
+      } catch (e) {
+        print("Invalid JSON: " + e.message, "log-error");
+        return;
+      }
+
+      client.send("/app/trip/" + tripId + "/excursions", {}, body);
+      print("SENT to /app/trip/" + tripId + "/excursions:\n" + body, "log-sent");
+    }
+  </script>
+</body>
+</html>
