@@ -1,6 +1,6 @@
 import { Share2, MoreHorizontal } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import type { Trip } from "src/types/trip"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import type { Trip } from "@/types/trip"
 
 function formatDateRange(start: string, end: string): string {
   const s = new Date(start);
@@ -23,12 +23,15 @@ interface TripCardProps {
 }
 
 export function TripCard({ trip }: TripCardProps) {
+  const title = trip.destinations.join(", ");
+  const ownerName = trip.group.createdBy.name;
+
   return (
     <div className="group cursor-pointer">
-      <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-muted">
+      <div className="relative aspect-3/2 overflow-hidden rounded-xl bg-muted">
         <img
           src={trip.coverImageUrl}
-          alt={trip.name}
+          alt={title}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -50,15 +53,14 @@ export function TripCard({ trip }: TripCardProps) {
       </div>
 
       <div className="pt-3">
-        <h3 className="text-sm font-semibold text-foreground">{trip.name}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Avatar size="sm" className="h-5 w-5">
-            {trip.owner.avatarUrl && <AvatarImage src={trip.owner.avatarUrl} alt={trip.owner.name} />}
-            <AvatarFallback className="text-[10px]">{getInitials(trip.owner.name)}</AvatarFallback>
+            <AvatarFallback className="text-[10px]">{getInitials(ownerName)}</AvatarFallback>
           </Avatar>
           <span>{formatDateRange(trip.startDate, trip.endDate)}</span>
           <span className="h-1 w-1 rounded-full bg-muted-foreground/50" />
-          <span>{trip.placesCount} lugares</span>
+          <span>{trip.excursionCount} excursões</span>
         </div>
       </div>
     </div>

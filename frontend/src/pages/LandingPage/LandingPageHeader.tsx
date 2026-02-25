@@ -24,7 +24,7 @@ export function LandingPageHeader() {
                 </nav>
 
                 <div className="hidden md:flex items-center gap-3">
-                    <Button variant="ghost" size="sm" className="cursor-pointer">Login</Button>
+                    <Button variant="ghost" size="sm" className="cursor-pointer" onClick={() => navigate('/login')}>Login</Button>
                     <Button size="sm" className="bg-gradient-primary text-white hover:opacity-90 cursor-pointer" onClick={() => navigate('/signup')} >Registrar</Button>
                 </div>
 
@@ -43,7 +43,7 @@ export function LandingPageHeader() {
                     <a href="#about" onClick={() => setMenuOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Sobre</a>
                     <a href="#features" onClick={() => setMenuOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Funcionalidades</a>
                     <div className="flex flex-col gap-2 pt-2">
-                        <Button variant="ghost" size="sm" className="w-full cursor-pointer">Login</Button>
+                        <Button variant="ghost" size="sm" className="w-full cursor-pointer" onClick={() => { setMenuOpen(false); navigate('/login'); }}>Login</Button>
                         <Button size="sm" className="w-full bg-gradient-primary text-white hover:opacity-90 cursor-pointer" onClick={() => { setMenuOpen(false); navigate('/signup'); }}>Registrar</Button>
                     </div>
                 </nav>

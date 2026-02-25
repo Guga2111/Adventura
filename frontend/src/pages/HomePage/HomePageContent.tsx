@@ -1,6 +1,5 @@
 import { Plus, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { TripCard } from "./TripCard"
 
 export function HomePageContent() {
   return (

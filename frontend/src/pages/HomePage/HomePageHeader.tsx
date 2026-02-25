@@ -1,21 +1,40 @@
 import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { Menu, X, Search, Bell } from "lucide-react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Menu, X, Search, Bell, LogOut } from "lucide-react"
 import AdventuraIcon from "@/components/common/AdventuraIcon"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/context/AuthContext"
 
 const navLinks = [
   { label: "Inicio", path: "/home" },
-  { label: "Grupos", path: "/grupos"},
+  { label: "Grupos", path: "/groups" },
   { label: "Explorar", path: "/explore" },
 ];
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export function HomePageHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const initials = user ? getInitials(user.username) : "";
 
   return (
     <header className="relative border-b bg-background">
@@ -45,7 +64,7 @@ export function HomePageHeader() {
           </nav>
         </div>
 
-        {/* Right: Search + Notifications + Avatar */}
+        {/* Right: Search + Notifications + Avatar + Logout */}
         <div className="hidden md:flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -62,8 +81,18 @@ export function HomePageHeader() {
           </Button>
 
           <Avatar size="sm">
-            <AvatarFallback className="text-xs">LS</AvatarFallback>
+            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={handleLogout}
+            className="cursor-pointer text-muted-foreground hover:text-foreground"
+            title="Terminar sessão"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Mobile: Search + Hamburger */}
@@ -99,11 +128,22 @@ export function HomePageHeader() {
               {link.label}
             </Link>
           ))}
-          <div className="flex items-center gap-3 pt-2 border-t">
-            <Avatar size="sm">
-              <AvatarFallback className="text-xs">LS</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-medium">Luis Sampaio</span>
+          <div className="flex items-center justify-between pt-2 border-t">
+            <div className="flex items-center gap-3">
+              <Avatar size="sm">
+                <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">{user?.username ?? ""}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleLogout}
+              className="cursor-pointer text-muted-foreground hover:text-foreground"
+              title="Terminar sessão"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </nav>
       )}
