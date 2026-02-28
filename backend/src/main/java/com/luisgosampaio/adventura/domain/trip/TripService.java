@@ -41,6 +41,11 @@ public class TripService {
         return tripRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<Trip> getTripsByUser (Long userId) {
+        return tripRepository.findByGroupMembersUserIdOrderByStartDateDesc(userId);
+    }
+
     @Transactional
     public Trip createTrip (Trip trip, Long groupId, Long userId) {
         SecurityUtils.verifyAuthenticatedUser(userId);

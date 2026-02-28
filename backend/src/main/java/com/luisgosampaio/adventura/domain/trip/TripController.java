@@ -24,6 +24,11 @@ public class TripController {
         return new ResponseEntity<>(tripService.getTripsByGroup(groupId), HttpStatus.OK);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Trip>> getTripsByUser (@PathVariable Long userId) {
+        return new ResponseEntity<>(tripService.getTripsByUser(userId), HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<Trip>> getAllTrips () {
         return new ResponseEntity<>(tripService.getAllTrips(), HttpStatus.OK);

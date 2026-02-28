@@ -16,6 +16,11 @@ export async function getTripsByGroup(groupId: number): Promise<Trip[]> {
   return data;
 }
 
+export async function getTripsByUser(userId: number): Promise<Trip[]> {
+  const { data } = await api.get<Trip[]>(`/trip/user/${userId}`);
+  return data;
+}
+
 export async function createTrip(
   groupId: number,
   userId: number,

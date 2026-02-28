@@ -11,4 +11,6 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     List<Trip> findByGroupId (Long groupId);
 
     List<Trip> findByGroupIdOrderByStartDateDesc (Long groupId);
+
+    List<Trip> findByGroupMembersUserIdOrderByStartDateDesc (Long userId);
 }
