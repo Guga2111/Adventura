@@ -81,16 +81,14 @@ export function HomePageContent() {
           </div>
         ) : trips.length === 0 ? (
           <div className="col-span-full flex flex-col items-center gap-3 py-16 text-center">
-            <p className="text-muted-foreground text-sm">
-              Você ainda não criou nada. Planejar uma nova viagem.
-            </p>
-            <Button
-              className="bg-gradient-primary text-white hover:opacity-90 rounded-full cursor-pointer"
-              onClick={() => setCreateTripOpen(true)}
-            >
-              <Plus className="h-4 w-4" />
-              Planejar nova viagem
-            </Button>
+            <div className="flex gap-1">
+              <p className="text-muted-foreground text-sm">
+              Nada criado por aqui.
+              </p>
+              <p className="text-gradient-primary text-sm cursor-pointer" onClick={() => setCreateTripOpen(true)}>
+                Vamos planejar uma viagem?
+              </p>
+            </div>
           </div>
         ) : (
           trips.map((trip) => (
