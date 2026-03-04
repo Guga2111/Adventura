@@ -5,6 +5,7 @@ import { LandingPage } from "./pages/LandingPage/LandingPage";
 import { SignUpPage } from "./pages/SignUpPage/SignUpPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { HomePage } from "./pages/HomePage/HomePage";
+import { TripPage } from "./pages/TripPage/TripPage";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/trip" element={<TripPage />}/>
         </Route>
       </Routes>
     </AuthProvider>
