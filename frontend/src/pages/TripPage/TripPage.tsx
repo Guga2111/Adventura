@@ -1,3 +1,5 @@
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/common/AppSidebar";
 import { TripPageHeader } from "./TripPageHeader";
 import type { Trip } from "@/types/trip";
 
@@ -38,13 +40,22 @@ const mockTrip: Trip = {
 
 export function TripPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <TripPageHeader trip={mockTrip} />
+    <SidebarProvider defaultOpen={false}>
+      <AppSidebar />
+      <SidebarInset>
+        {/* Mobile: trigger to open sidebar as sheet */}
+        <div className="flex md:hidden items-center gap-2 px-4 py-2 border-b">
+          <SidebarTrigger />
+          <span className="font-semibold text-sm">Adventura</span>
+        </div>
 
-      {/* Main content area — tabs and sections go here */}
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
-        {/* Excursions | Budget | Members | Settings tabs coming soon */}
-      </div>
-    </div>
+        <TripPageHeader trip={mockTrip} />
+
+        {/* Main content area — tabs and sections go here */}
+        <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
+          {/* Excursions | Budget | Members | Settings tabs coming soon */}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
