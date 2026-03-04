@@ -43,7 +43,7 @@ export function HomePageHeader() {
         <div className="flex items-center gap-6">
           <Link to="/home" className="flex items-center gap-2 text-lg font-bold">
             <AdventuraIcon size={36} className="text-[#dda600]" />
-            <span>Adventura</span>
+            <span className="text-gradient-primary">Adventura</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-5">
