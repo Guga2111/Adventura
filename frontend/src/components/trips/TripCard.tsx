@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { Share2, MoreHorizontal } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import type { Trip } from "@/types/trip"
@@ -23,11 +24,12 @@ interface TripCardProps {
 }
 
 export function TripCard({ trip }: TripCardProps) {
+  const navigate = useNavigate();
   const title = trip.destinations.join(", ");
   const ownerName = trip.group.createdBy.name;
 
   return (
-    <div className="group cursor-pointer">
+    <div onClick={() => navigate(`/trip/${trip.id}`)} className="group cursor-pointer block">
       <div className="relative aspect-3/2 overflow-hidden rounded-xl bg-muted">
         <img
           src={trip.coverImageUrl}
@@ -49,6 +51,7 @@ export function TripCard({ trip }: TripCardProps) {
         <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <button
             type="button"
+            onClick={(e) => e.preventDefault()}
             className="flex h-8 items-center gap-1.5 rounded-full bg-white/80 backdrop-blur-sm px-3 shadow-sm hover:bg-white transition-colors"
           >
             <Share2 className="h-3.5 w-3.5 text-gray-700" />
@@ -56,6 +59,7 @@ export function TripCard({ trip }: TripCardProps) {
           </button>
           <button
             type="button"
+            onClick={(e) => e.preventDefault()}
             className="flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-colors"
           >
             <MoreHorizontal className="h-4 w-4 text-gray-700" />

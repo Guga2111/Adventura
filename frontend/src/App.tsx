@@ -17,7 +17,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<HomePage />} />
-          <Route path="/trip" element={<TripPage />}/>
+          <Route path="/trip/:id" element={<TripPage />}/>
         </Route>
       </Routes>
     </AuthProvider>

@@ -19,7 +19,7 @@ export interface Excursion {
 
 export interface Trip {
   id: number;
-  group: Group; // group.members omitted by @JsonIgnoreProperties
+  group: Group;
   destinations: string[];
   countryCodes: string[];
   description: string;
