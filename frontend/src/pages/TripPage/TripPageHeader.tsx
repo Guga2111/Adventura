@@ -40,12 +40,12 @@ interface TripPageHeaderProps {
 }
 
 export function TripPageHeader({ trip }: TripPageHeaderProps) {
-  const members = trip.group.members;
+  const members = trip.group.members ?? [];
   const visibleMembers = members.slice(0, 4);
   const extraCount = members.length - visibleMembers.length;
 
   return (
-    <div className="relative h-64 md:h-96 overflow-hidden">
+    <div className="relative h-48 md:h-64 overflow-hidden">
       {/* Background image */}
       <img
         src={trip.coverImageUrl}
@@ -62,7 +62,7 @@ export function TripPageHeader({ trip }: TripPageHeaderProps) {
         {/* Top row: members (right-aligned) */}
         <div className="flex justify-end">
           <div className="flex items-center gap-2 text-white">
-            <Users className="h-4 w-4 text-white/70" />
+            <Users className="h-4 w-4 text-white/80" />
             <div className="flex -space-x-2">
               {visibleMembers.map((m) => (
                 <Avatar key={m.id} className="h-7 w-7 border-2 border-white/40">
@@ -73,7 +73,7 @@ export function TripPageHeader({ trip }: TripPageHeaderProps) {
               ))}
             </div>
             {extraCount > 0 && (
-              <span className="text-xs text-white/70">+{extraCount}</span>
+              <span className="text-xs font-semibold text-white/80">+{extraCount}</span>
             )}
           </div>
         </div>
@@ -86,7 +86,7 @@ export function TripPageHeader({ trip }: TripPageHeaderProps) {
                 {STATUS_LABELS[trip.status]}
             </Badge>
             <span>
-                <span className="text-xs text-white/60 justify-between flex items-center gap-2">
+                <span className="text-xs font-semibold text-white/80 justify-between flex items-center gap-2">
                     <Calendar size={16}></Calendar>
                     {formatDateRange(trip.startDate, trip.endDate)}
                 </span>
@@ -100,7 +100,7 @@ export function TripPageHeader({ trip }: TripPageHeaderProps) {
 
           {/* Destinations with flags */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <MapPin className="h-4 w-4 text-white/60" />
+            <MapPin className="h-4 w-4 text-white/80" />
             {trip.destinations.map((dest, i) => (
               <span key={dest} className="flex items-center text-sm">
                 <span>{countryCodeToFlag(trip.countryCodes[i] ?? "")}</span>
