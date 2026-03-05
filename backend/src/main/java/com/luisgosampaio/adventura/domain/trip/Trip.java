@@ -1,6 +1,5 @@
 package com.luisgosampaio.adventura.domain.trip;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.luisgosampaio.adventura.domain.excursion.Excursion;
 import com.luisgosampaio.adventura.domain.group.Group;
@@ -30,7 +29,6 @@ public class Trip {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
-    @JsonIgnoreProperties({"members"})
     private Group group;
 
     @ElementCollection
