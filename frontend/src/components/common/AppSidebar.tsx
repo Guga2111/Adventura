@@ -6,6 +6,7 @@ import {
   ChevronsUpDown, Wallet, MapPin,
 } from "lucide-react";
 import AdventuraIcon from "@/components/common/AdventuraIcon";
+import { GroupsNavItem } from "@/components/common/GroupsNavItem";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sidebar,
@@ -16,7 +17,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
@@ -48,11 +48,6 @@ interface NavItem {
   badge?: number;
 }
 
-const mainNavItems: NavItem[] = [
-  { icon: House,   label: "Início",   href: "/home" },
-  { icon: Users,   label: "Grupos",   href: "/groups" },
-  { icon: Compass, label: "Explorar", href: "/explore" },
-];
 
 const tripNavItems: NavItem[] = [
   { icon: MapPin, label: "Excursões", href: "#excursions" },
@@ -192,24 +187,33 @@ export function AppSidebar() {
           <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.href}
-                    tooltip={item.label}
-                    className="data-[active=true]:bg-gradient-primary! data-[active=true]:text-white!"
-                  >
-                    <Link to={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {item.badge && (
-                    <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={location.pathname === "/home"}
+                  tooltip="Início"
+                  className="data-[active=true]:bg-gradient-primary! data-[active=true]:text-white!"
+                >
+                  <Link to="/home">
+                    <House />
+                    <span>Início</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <GroupsNavItem />
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={location.pathname === "/explore"}
+                  tooltip="Explorar"
+                  className="data-[active=true]:bg-gradient-primary! data-[active=true]:text-white!"
+                >
+                  <Link to="/explore">
+                    <Compass />
+                    <span>Explorar</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
