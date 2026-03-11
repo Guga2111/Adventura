@@ -4,11 +4,11 @@ import type { Trip, TripStatus } from "@/types/trip";
 import { Badge } from "@/components/ui/badge";
 
 const STATUS_LABELS: Record<TripStatus, string> = {
-  PLANNING: "Planning",
-  CONFIRMED: "Confirmed",
-  ON_GOING: "On Going",
-  FINISHED: "Finished",
-  CANCELLED: "Cancelled",
+  PLANNING: "Planejando",
+  CONFIRMED: "Confirmada",
+  ON_GOING: "Acontecendo",
+  FINISHED: "Finalizada",
+  CANCELLED: "Cancelada",
 };
 
 function countryCodeToFlag(code: string): string {

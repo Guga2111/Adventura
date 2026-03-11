@@ -72,13 +72,13 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900">
               <Binoculars className="h-4 w-4 text-white" />
             </div>
-            Add Excursion
+            Adicione Passeio
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleExcSubmit} className="space-y-5">
           <div className="space-y-1.5">
-            <Label htmlFor="excName">Name</Label>
+            <Label htmlFor="excName">Nome</Label>
             <Input
               id="excName"
               placeholder="Bosphorus Cruise"
@@ -90,7 +90,7 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
 
           <div className="space-y-1.5">
             <Label htmlFor="excPrice">
-              Price per person <span className="text-muted-foreground text-xs">(optional, €)</span>
+              Preço por pessoa <span className="text-muted-foreground text-xs">(opcional, €)</span>
             </Label>
             <Input
               id="excPrice"
@@ -104,7 +104,7 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="excStartDate">Start date</Label>
+              <Label htmlFor="excStartDate">Data de início</Label>
               <Input
                 id="excStartDate"
                 type="datetime-local"
@@ -115,7 +115,7 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="excEndDate">
-                End date <span className="text-muted-foreground text-xs">(optional)</span>
+                Data final <span className="text-muted-foreground text-xs">(opcional)</span>
               </Label>
               <Input
                 id="excEndDate"
@@ -128,7 +128,7 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
 
           {members.length > 0 && (
             <div className="space-y-2">
-              <Label>Participants</Label>
+              <Label>Participantes</Label>
               <div className="rounded-lg border divide-y text-sm">
                 {presenceRows.map((row, i) => (
                   <label key={row.groupMemberId} className="flex items-center gap-2 cursor-pointer p-3">
@@ -158,11 +158,11 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
               onClick={() => onOpenChange(false)}
               disabled={excLoading}
             >
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit" disabled={excLoading}>
               {excLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Excursion
+              Adicionar
             </Button>
           </DialogFooter>
         </form>

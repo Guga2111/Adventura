@@ -66,7 +66,7 @@ export function FlightCard({ flight, tripId, members, step, dragHandleListeners,
             {!myPassenger && myGroupMember && (
               <Button size="sm" variant="outline" className="w-full border-dashed text-gray-500" onClick={openJoin}>
                 <PlaneTakeoff className="h-3.5 w-3.5 mr-1.5" />
-                Join this flight
+                Entre no voo
               </Button>
             )}
 

@@ -42,37 +42,37 @@ function RescheduleDialogInner({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CalendarClock className="h-4 w-4" />
-            Reschedule
+            Reagendar
           </DialogTitle>
           <p className="text-sm text-muted-foreground truncate">{target.name}</p>
         </DialogHeader>
 
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label>Date</Label>
+            <Label>Data</Label>
             <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label>Start time</Label>
+              <Label>Tempo de início</Label>
               <Input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label>End time <span className="text-muted-foreground">(optional)</span></Label>
+              <Label>Tempo final <span className="text-muted-foreground">(optional)</span></Label>
               <Input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
             </div>
           </div>
           {target.kind === "flight" && (
             <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-              Flight rescheduling is informational only — ticket changes must be made directly with the airline.
+              Reagendamento do voo é apenas informacional — se a passagem mudar comunicar diretamente com a companhia de sua escolha.
             </p>
           )}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel}>Cancel</Button>
+          <Button variant="outline" onClick={onCancel}>Cancelar</Button>
           <Button onClick={handleConfirm} disabled={!date || !startTime}>
-            Confirm
+            Confirmar
           </Button>
         </DialogFooter>
       </DialogContent>

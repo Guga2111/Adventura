@@ -19,15 +19,15 @@ export function TripPageExcursionsHeader({ tripId, members, onFlightCreated, sen
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-lg font-semibold text-foreground">Trip Timeline</h1>
+        <h1 className="text-lg font-semibold text-foreground">Jornal da Viagem</h1>
         <div className="flex items-center justify-between gap-2">
           <Button size="sm" className="cursor-pointer rounded-full bg-gradient-primary" onClick={() => setFlightOpen(true)}>
             <Plus className="h-4 w-4 mr-1" />
-            Add Flight
+            Adicione Voo
           </Button>
           <Button size="sm" className="cursor-pointer rounded-full bg-gradient-primary" onClick={() => setExcursionOpen(true)}>
             <Binoculars className="h-4 w-4 mr-1" />
-            Add Excursion
+            Adicione Passeio
           </Button>
         </div>
       </div>

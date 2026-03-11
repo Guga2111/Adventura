@@ -41,16 +41,16 @@ export interface AddFlightDialogProps {
 }
 
 const SEAT_CLASS_OPTIONS: { value: SeatClass; label: string }[] = [
-  { value: "ECONOMY", label: "Economy" },
-  { value: "PREMIUM_ECONOMY", label: "Premium Economy" },
+  { value: "ECONOMY", label: "Economica" },
+  { value: "PREMIUM_ECONOMY", label: "Premium Economica" },
   { value: "BUSINESS", label: "Business" },
   { value: "FIRST", label: "First" },
 ];
 
 const STATUS_OPTIONS: { value: FlightPassengerStatus; label: string }[] = [
-  { value: "UNDECIDED", label: "Undecided" },
-  { value: "CONFIRMED", label: "Confirmed" },
-  { value: "CANCELLED", label: "Cancelled" },
+  { value: "UNDECIDED", label: "Nao decidido" },
+  { value: "CONFIRMED", label: "Confirmado" },
+  { value: "CANCELLED", label: "Cancelado" },
 ];
 
 export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightCreated }: AddFlightDialogProps) {
@@ -161,14 +161,14 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900">
               <Plane className="h-4 w-4 text-white" />
             </div>
-            Add Flight
+            Adicionar Voo
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="airline">Airline</Label>
+              <Label htmlFor="airline">Companhia aérea</Label>
               <Input
                 id="airline"
                 placeholder="Turkish Airlines"
@@ -177,7 +177,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="flightNumber">Flight number</Label>
+              <Label htmlFor="flightNumber">Número do Voo</Label>
               <Input
                 id="flightNumber"
                 placeholder="TK 12"
@@ -190,7 +190,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="origin">
-                Origin <span className="text-muted-foreground text-xs">(IATA)</span>
+                Origem <span className="text-muted-foreground text-xs">(IATA)</span>
               </Label>
               <Input
                 id="origin"
@@ -203,7 +203,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="destination">
-                Destination <span className="text-muted-foreground text-xs">(IATA)</span>
+                Destino <span className="text-muted-foreground text-xs">(IATA)</span>
               </Label>
               <Input
                 id="destination"
@@ -218,7 +218,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="departureTime">Departure</Label>
+              <Label htmlFor="departureTime">Partida</Label>
               <Input
                 id="departureTime"
                 type="datetime-local"
@@ -228,7 +228,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="departureTz">Departure timezone</Label>
+              <Label htmlFor="departureTz">Partida timezone</Label>
               <Input
                 id="departureTz"
                 placeholder="America/Sao_Paulo"
@@ -241,7 +241,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="arrivalTime">Arrival</Label>
+              <Label htmlFor="arrivalTime">Destino</Label>
               <Input
                 id="arrivalTime"
                 type="datetime-local"
@@ -251,7 +251,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="arrivalTz">Arrival timezone</Label>
+              <Label htmlFor="arrivalTz">Destino timezone</Label>
               <Input
                 id="arrivalTz"
                 placeholder="Europe/Istanbul"
@@ -263,7 +263,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="bookingRef">Booking reference</Label>
+            <Label htmlFor="bookingRef">Reserva</Label>
             <Input
               id="bookingRef"
               placeholder="ABC123"
@@ -272,10 +272,10 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">Anotações</Label>
             <Textarea
               id="notes"
-              placeholder="Window seats requested..."
+              placeholder="Janelas fechadas e sintos apertados..."
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -284,7 +284,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
 
           {members.length > 0 && (
             <div className="space-y-2">
-              <Label>Passengers</Label>
+              <Label>Passengeiros</Label>
               <div className="rounded-lg border divide-y text-sm">
                 {passengerRows.map((row, i) => (
                   <div key={row.groupMemberId} className="p-3 space-y-2">
@@ -301,7 +301,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
                     {row.included && (
                       <div className="grid grid-cols-2 gap-2 pl-6">
                         <div className="space-y-1">
-                          <Label className="text-xs">Seat</Label>
+                          <Label className="text-xs">Assento</Label>
                           <Input
                             placeholder="14A"
                             value={row.seatNumber}
@@ -310,7 +310,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Price (€)</Label>
+                          <Label className="text-xs">Preço (€)</Label>
                           <Input
                             type="number"
                             placeholder="850"
@@ -320,7 +320,7 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Class</Label>
+                          <Label className="text-xs">Classe</Label>
                           <Select
                             value={row.seatClass}
                             onValueChange={(v) => updatePassenger(i, { seatClass: v as SeatClass })}
@@ -372,11 +372,11 @@ export function AddFlightDialog({ open, onOpenChange, tripId, members, onFlightC
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Flight
+              Adicionar
             </Button>
           </DialogFooter>
         </form>

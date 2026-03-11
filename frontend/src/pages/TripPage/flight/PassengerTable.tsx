@@ -33,10 +33,10 @@ export function PassengerTable({ passengers, currentUserId, removingId, onEdit, 
       <table className="w-full text-xs">
         <thead>
           <tr className="text-gray-400 uppercase tracking-wide">
-            <th className="pb-1.5 text-left font-medium">Passenger</th>
-            <th className="pb-1.5 text-left font-medium">Seat</th>
-            <th className="pb-1.5 text-left font-medium">Class</th>
-            <th className="pb-1.5 text-right font-medium">Price</th>
+            <th className="pb-1.5 text-left font-medium">Passageiro</th>
+            <th className="pb-1.5 text-left font-medium">Assento</th>
+            <th className="pb-1.5 text-left font-medium">Classe</th>
+            <th className="pb-1.5 text-right font-medium">Preço</th>
             <th className="pb-1.5 text-right font-medium">Status</th>
             <th className="pb-1.5 w-14" />
           </tr>

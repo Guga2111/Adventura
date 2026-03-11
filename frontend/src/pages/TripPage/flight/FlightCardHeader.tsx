@@ -54,7 +54,7 @@ export function FlightCardHeader({
               {flight.originAirport} → {flight.destinationAirport}
             </span>
             <Badge variant="outline" className="text-xs bg-gray-50">
-              Flight
+              Voo
             </Badge>
             <span className="text-xs text-gray-500 font-medium">
               {flight.airline} · {flight.flightNumber}
@@ -76,7 +76,7 @@ export function FlightCardHeader({
 
           <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
             <Hash className="h-3 w-3" />
-            Booking ref:{" "}
+            Reserva:{" "}
             <span className="font-mono font-medium text-gray-700">{flight.bookingReference}</span>
           </p>
         </div>

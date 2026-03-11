@@ -25,17 +25,17 @@ export function PassengerFormFields({ form, setForm }: PassengerFormFieldsProps)
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="space-y-1.5">
-        <Label htmlFor="seat">Seat</Label>
+        <Label htmlFor="seat">Assento</Label>
         <Input id="seat" placeholder="14A" maxLength={6} value={form.seatNumber}
           onChange={(e) => setForm((f) => ({ ...f, seatNumber: e.target.value }))} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="price">Price (€)</Label>
+        <Label htmlFor="price">Preço (€)</Label>
         <Input id="price" type="number" placeholder="850" value={form.price}
           onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
       </div>
       <div className="space-y-1.5">
-        <Label>Class</Label>
+        <Label>Classe</Label>
         <Select value={form.seatClass} onValueChange={(v) => setForm((f) => ({ ...f, seatClass: v as SeatClass }))}>
           <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
           <SelectContent>

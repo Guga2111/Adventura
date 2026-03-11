@@ -52,7 +52,7 @@ export function ExcursionCard({ excursion, step, dragHandleListeners, dragHandle
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-sm text-gray-900">{excursion.name}</span>
             <Badge variant="outline" className="text-xs bg-gray-50">
-              Excursion
+              Passeio
             </Badge>
           </div>
 
@@ -64,12 +64,12 @@ export function ExcursionCard({ excursion, step, dragHandleListeners, dragHandle
             </span>
             <span className="flex items-center gap-1">
               <Users className="h-3 w-3" />
-              {excursion.presence.length} going
+              {excursion.presence.length} indo
             </span>
             {excursion.price === 0 ? (
-              <span className="font-medium text-green-600 underline">Free</span>
+              <span className="font-medium text-green-600 underline">Gratuito</span>
             ) : (
-              <span className="font-medium text-gray-700">€{excursion.price} /person</span>
+              <span className="font-medium text-gray-700">€{excursion.price} /pessoa</span>
             )}
           </div>
 

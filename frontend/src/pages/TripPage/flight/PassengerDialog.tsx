@@ -24,15 +24,15 @@ export function PassengerDialog({ mode, form, setForm, onSubmit, onClose, loadin
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {isJoin
-              ? <><PlaneTakeoff className="h-4 w-4" /> Join flight</>
-              : <><Pencil className="h-4 w-4" /> Edit my details</>}
+              ? <><PlaneTakeoff className="h-4 w-4" /> Entre no voo</>
+              : <><Pencil className="h-4 w-4" /> Edite meus detalhes</>}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <PassengerFormFields form={form} setForm={setForm} />
           {error && <p className="text-xs text-red-500">{error}</p>}
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancelar</Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isJoin ? "Join" : "Save"}
