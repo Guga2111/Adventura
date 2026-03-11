@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/common/AppSidebar";
 import { TripPageHeader } from "./TripPageHeader";
+import { TripPageExcursions } from "./TripPageExcursions";
+import { TripPageMap } from "./TripPageMap";
 import { getTripById } from "@/services/TripService";
 import type { Trip } from "@/types/trip";
 
@@ -63,9 +65,21 @@ export function TripPage() {
 
         <TripPageHeader trip={trip} />
 
-        {/* Main content area — tabs and sections go here */}
-        <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
-          {/* Excursions | Budget | Members | Settings tabs coming soon */}
+        {/* Main content area */}
+        <div className="flex flex-col lg:flex-row lg:h-[calc(100vh-(--spacing(16)))]">
+          {/* Timeline — scrollable */}
+          <div className="flex-1 min-w-0 overflow-y-auto px-4 md:px-8 py-8">
+            <TripPageExcursions
+              tripId={trip.id}
+              members={trip.group.members}
+              initialFlights={trip.flights ?? []}
+              initialExcursions={trip.excursions ?? []}
+            />
+          </div>
+          {/* Map — fills remaining height, hidden on mobile */}
+          <div className="hidden lg:block lg:w-42/100 shrink-0">
+            <TripPageMap />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
