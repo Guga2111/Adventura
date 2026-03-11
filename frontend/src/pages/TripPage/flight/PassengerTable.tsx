@@ -7,8 +7,8 @@ function initials(name: string) {
 }
 
 const SEAT_CLASS_LABEL: Record<SeatClass, string> = {
-  ECONOMY: "Economy",
-  PREMIUM_ECONOMY: "Premium Economy",
+  ECONOMY: "Economica",
+  PREMIUM_ECONOMY: "Economica Premium",
   BUSINESS: "Business",
   FIRST: "First",
 };
