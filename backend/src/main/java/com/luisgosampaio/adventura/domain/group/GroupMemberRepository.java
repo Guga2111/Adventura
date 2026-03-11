@@ -19,4 +19,6 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     long countByGroupIdAndRole(Long groupId, GroupRole role);
 
     List<GroupMember> findByIdInAndGroupId(List<Long> ids, Long groupId);
+
+    Optional<GroupMember> findByIdAndGroupId(Long id, Long groupId);
 }

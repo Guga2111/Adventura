@@ -70,4 +70,16 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(e.getLocalizedMessage()));
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(FlightNotFoundException.class)
+    public ResponseEntity<Object> handleFlightNotFoundException (FlightNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(e.getLocalizedMessage()));
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FlightPassengerNotFoundException.class)
+    public ResponseEntity<Object> handleFlightPassengerNotFoundException (FlightPassengerNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(e.getLocalizedMessage()));
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }

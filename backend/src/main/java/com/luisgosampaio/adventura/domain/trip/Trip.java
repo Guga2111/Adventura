@@ -2,6 +2,7 @@ package com.luisgosampaio.adventura.domain.trip;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.luisgosampaio.adventura.domain.excursion.Excursion;
+import com.luisgosampaio.adventura.domain.flight.Flight;
 import com.luisgosampaio.adventura.domain.group.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -47,6 +48,10 @@ public class Trip {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Excursion> excursions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Flight> flights = new ArrayList<>();
 
     @Column(name = "excursions_count")
     private Integer excursionCount = 0;
