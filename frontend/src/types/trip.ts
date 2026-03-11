@@ -1,5 +1,6 @@
 import type { Group } from "./group";
 import type { GroupMember } from "./group";
+import type { Flight } from "./flight";
 
 export type TripStatus = "PLANNING" | "CONFIRMED" | "ON_GOING" | "FINISHED" | "CANCELLED";
 
@@ -24,6 +25,7 @@ export interface Trip {
   countryCodes: string[];
   description: string;
   excursions: Excursion[];
+  flights: Flight[];
   excursionCount: number;
   startDate: string; 
   endDate: string;
