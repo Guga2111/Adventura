@@ -61,6 +61,15 @@ public class Excursion {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "location_name")
+    private String locationName;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

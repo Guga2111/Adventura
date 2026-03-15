@@ -23,4 +23,7 @@ public class ExcursionMessage {
     private LocalDateTime endDate;
     private List<Long> presenceIds;
     private String updatedBy;
+    private String locationName;
+    private Double latitude;
+    private Double longitude;
 }

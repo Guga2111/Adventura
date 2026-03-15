@@ -16,6 +16,9 @@ export interface Excursion {
   trip?: Trip; // absent when serialized inside Trip.excursions (@JsonBackReference)
   createdAt: string;
   updatedAt: string;
+  locationName?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface Trip {
@@ -58,4 +61,7 @@ export interface ExcursionMessage {
   endDate: string;
   presenceIds: number[];
   updatedBy: string;
+  locationName?: string;
+  latitude?: number;
+  longitude?: number;
 }

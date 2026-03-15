@@ -11,6 +11,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import type { GroupMember } from "@/types/group";
+import { usePlaceSuggestion } from "@/hooks/usePlaceSuggestion";
+import { LocationBadge } from "@/pages/TripPage/map/LocationBadge";
+import { MiniMapPreview } from "@/pages/TripPage/map/MiniMapPreview";
 
 export interface AddExcursionDialogProps {
   open: boolean;
@@ -29,6 +32,25 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
   const [presenceRows, setPresenceRows] = useState(() =>
     members.map((m) => ({ groupMemberId: m.id, name: m.user.name, included: false }))
   );
+  const [resolvedLocation, setResolvedLocation] = useState<{
+    locationName: string;
+    latitude:     number;
+    longitude:    number;
+  } | null>(null);
+
+  const { suggestion, loading: suggestLoading, error: suggestError } = usePlaceSuggestion(excName);
+
+  useEffect(() => {
+    if (suggestion) {
+      setResolvedLocation({
+        locationName: suggestion.name,
+        latitude:     suggestion.lat,
+        longitude:    suggestion.lon,
+      });
+    } else {
+      setResolvedLocation(null);
+    }
+  }, [suggestion]);
 
   function resetExcForm() {
     setExcName("");
@@ -37,6 +59,7 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
     setExcEndDate("");
     setPresenceRows(members.map((m) => ({ groupMemberId: m.id, name: m.user.name, included: false })));
     setExcError(null);
+    setResolvedLocation(null);
   }
 
   useEffect(() => {
@@ -59,6 +82,9 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
       startDate: excStartDate,
       endDate: excEndDate || undefined,
       presenceIds,
+      locationName: resolvedLocation?.locationName,
+      latitude:     resolvedLocation?.latitude,
+      longitude:    resolvedLocation?.longitude,
     });
     setExcLoading(false);
     onOpenChange(false);
@@ -86,6 +112,14 @@ export function AddExcursionDialog({ open, onOpenChange, members, sendUpdate }: 
               onChange={(e) => setExcName(e.target.value)}
               required
             />
+            <LocationBadge
+              loading={suggestLoading}
+              error={suggestError}
+              suggestion={suggestion}
+            />
+            {suggestion && (
+              <MiniMapPreview lat={suggestion.lat} lon={suggestion.lon} />
+            )}
           </div>
 
           <div className="space-y-1.5">

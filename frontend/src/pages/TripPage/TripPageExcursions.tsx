@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -13,16 +13,14 @@ import { FlightCard } from "./flight/FlightCard";
 import { ExcursionCard } from "./ExcursionCard";
 import type { Excursion } from "@/types/trip";
 import type { Flight } from "@/types/flight";
-import { getFlights } from "@/services/FlightService";
+import { getFlights, updateFlight } from "@/services/FlightService";
 import { TripPageExcursionsHeader } from "./TripPageExcursionsHeader";
 import { RescheduleDialog } from "./RescheduleDialog";
 import type { RescheduleTarget } from "./RescheduleDialog";
 import { useExcursionSocket } from "@/hooks/useExcursionSocket";
 import type { GroupMember } from "@/types/group";
-
-type TripEvent =
-  | { kind: "flight";    sortableId: string; date: string; time: string; data: Flight }
-  | { kind: "excursion"; sortableId: string; date: string; time: string; data: Excursion };
+import { buildFlatTimeline } from "./tripUtils";
+import type { TripEvent } from "./tripUtils";
 
 function isoToDateAndTime(iso: string): { date: string; time: string } {
   const [date, time] = iso.split("T");
@@ -63,13 +61,16 @@ function buildTimeline(
 }
 
 interface SortableEventCardProps {
-  event:   TripEvent;
-  step:    number;
-  tripId:  number;
-  members: GroupMember[];
+  event:       TripEvent;
+  step:        number;
+  tripId:      number;
+  members:     GroupMember[];
+  isActive:    boolean;
+  onStepClick: () => void;
+  cardRef:     React.RefObject<HTMLDivElement | null> | null;
 }
 
-function SortableEventCard({ event, step, tripId, members }: SortableEventCardProps) {
+function SortableEventCard({ event, step, tripId, members, isActive, onStepClick, cardRef }: SortableEventCardProps) {
   const {
     attributes, listeners, setNodeRef,
     transform, transition, isDragging,
@@ -84,13 +85,15 @@ function SortableEventCard({ event, step, tripId, members }: SortableEventCardPr
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={(node) => { setNodeRef(node); if (cardRef) (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = node; }} style={style}>
       {event.kind === "flight" ? (
         <FlightCard
           flight={event.data}
           tripId={tripId}
           members={members}
           step={step}
+          isActive={isActive}
+          onStepClick={onStepClick}
           dragHandleListeners={listeners}
           dragHandleAttributes={attributes}
         />
@@ -98,6 +101,8 @@ function SortableEventCard({ event, step, tripId, members }: SortableEventCardPr
         <ExcursionCard
           excursion={event.data}
           step={step}
+          isActive={isActive}
+          onStepClick={onStepClick}
           dragHandleListeners={listeners}
           dragHandleAttributes={attributes}
         />
@@ -107,16 +112,30 @@ function SortableEventCard({ event, step, tripId, members }: SortableEventCardPr
 }
 
 interface TripPageExcursionsProps {
-  tripId:           number;
-  members:          GroupMember[];
-  initialFlights:   Flight[];
-  initialExcursions: Excursion[];
+  tripId:              number;
+  members:             GroupMember[];
+  initialFlights:      Flight[];
+  initialExcursions:   Excursion[];
+  activeStep:          number;
+  onStepChange:        (step: number) => void;
+  onFlightsChange:     (flights: Flight[]) => void;
+  onExcursionsChange:  (excursions: Excursion[]) => void;
 }
 
-export function TripPageExcursions({ tripId, members, initialFlights, initialExcursions }: TripPageExcursionsProps) {
+export function TripPageExcursions({ tripId, members, initialFlights, initialExcursions, activeStep, onStepChange, onFlightsChange, onExcursionsChange }: TripPageExcursionsProps) {
   const [rescheduleTarget, setRescheduleTarget] = useState<RescheduleTarget | null>(null);
   const [flights, setFlights] = useState<Flight[]>(initialFlights);
   const [excursions, setExcursions] = useState<Excursion[]>(initialExcursions);
+
+  const activeCardRef = useRef<HTMLDivElement | null>(null);
+
+  // Sync live data up to TripPage so TripPageMap always has fresh state
+  useEffect(() => { onFlightsChange(flights); }, [flights]);
+  useEffect(() => { onExcursionsChange(excursions); }, [excursions]);
+
+  useEffect(() => {
+    activeCardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [activeStep]);
 
   const { sendUpdate } = useExcursionSocket(tripId, (raw) => {
     const data = raw as Record<string, unknown>;
@@ -141,9 +160,14 @@ export function TripPageExcursions({ tripId, members, initialFlights, initialExc
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
+  const flatEvents  = useMemo(() => buildFlatTimeline(flights, excursions), [flights, excursions]);
   const grouped     = buildTimeline(flights, excursions);
   const allEvents   = Object.values(grouped).flat();
   const sortableIds = allEvents.map((e) => e.sortableId);
+
+  function stepForEvent(sortableId: string): number {
+    return flatEvents.findIndex((e) => e.sortableId === sortableId) + 1;
+  }
 
   function handleDragEnd({ active, over }: DragEndEvent) {
     if (!over || active.id === over.id) return;
@@ -187,7 +211,39 @@ export function TripPageExcursions({ tripId, members, initialFlights, initialExc
         ),
       );
     }
+
+    if (rescheduleTarget.kind === "flight") {
+      const flight = flights.find((f) => f.id === rescheduleTarget.id);
+      if (flight) {
+        const dto = {
+          flightNumber:       flight.flightNumber,
+          airline:            flight.airline,
+          originAirport:      flight.originAirport,
+          destinationAirport: flight.destinationAirport,
+          departureLocalTime: startDate,
+          departureTimezone:  flight.departureTimezone,
+          arrivalLocalTime:   flight.arrivalLocalTime,
+          arrivalTimezone:    flight.arrivalTimezone,
+          bookingReference:   flight.bookingReference,
+          notes:              flight.notes,
+          passengers:         flight.passengers.map((p) => ({
+            groupMemberId: p.groupMember.id,
+            seatNumber:    p.seatNumber,
+            seatClass:     p.seatClass,
+            price:         p.price,
+            status:        p.status,
+          })),
+        };
+        updateFlight(tripId, flight.id, dto)
+          .then((updated) =>
+            setFlights((prev) => prev.map((f) => (f.id === updated.id ? updated : f)))
+          )
+          .catch(console.error);
+      }
+    }
+
     setRescheduleTarget(null);
+    onStepChange(1);
   }
 
   return (
@@ -212,13 +268,18 @@ export function TripPageExcursions({ tripId, members, initialFlights, initialExc
                   <div className="space-y-3">
                     {events.map((event) => {
                       globalStep++;
+                      const step = globalStep;
+                      const isActive = stepForEvent(event.sortableId) === activeStep;
                       return (
                         <SortableEventCard
                           key={event.sortableId}
                           event={event}
-                          step={globalStep}
+                          step={step}
                           tripId={tripId}
                           members={members}
+                          isActive={isActive}
+                          onStepClick={() => onStepChange(stepForEvent(event.sortableId))}
+                          cardRef={isActive ? activeCardRef : null}
                         />
                       );
                     })}

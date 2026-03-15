@@ -3,6 +3,7 @@ import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 import type { Excursion } from "@/types/trip";
 
 function isoToTime(iso: string) {
@@ -16,22 +17,33 @@ function initials(name: string) {
 interface ExcursionCardProps {
   excursion: Excursion;
   step: number;
+  isActive: boolean;
+  onStepClick: () => void;
   dragHandleListeners?: SyntheticListenerMap;
   dragHandleAttributes?: DraggableAttributes;
 }
 
-export function ExcursionCard({ excursion, step, dragHandleListeners, dragHandleAttributes }: ExcursionCardProps) {
+export function ExcursionCard({ excursion, step, isActive, onStepClick, dragHandleListeners, dragHandleAttributes }: ExcursionCardProps) {
   const startTime = isoToTime(excursion.startDate);
   const endTime = excursion.endDate ? isoToTime(excursion.endDate) : null;
   const displayTime = endTime ? `${startTime} - ${endTime}` : startTime;
 
   return (
-    <div className="flex gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+    <div className={cn("flex gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition-all", isActive && "ring-2 ring-[#daa060]")}>
       {/* Drag handle + step badge */}
       <div className="flex shrink-0 flex-col items-center gap-1 pt-0.5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-primary text-white text-xs font-bold shadow-sm">
+        <button
+          onClick={onStepClick}
+          aria-label={`Go to step ${step}`}
+          className={cn(
+            "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-sm transition-all",
+            isActive
+              ? "bg-gradient-primary text-white ring-2 ring-[#daa060] ring-offset-2"
+              : "border border-muted-foreground text-muted-foreground hover:opacity-70",
+          )}
+        >
           {step}
-        </div>
+        </button>
         <button
           className="cursor-grab active:cursor-grabbing touch-none text-gray-300 hover:text-gray-500 transition-colors"
           {...dragHandleListeners}

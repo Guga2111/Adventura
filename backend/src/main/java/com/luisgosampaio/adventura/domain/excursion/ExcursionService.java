@@ -58,6 +58,9 @@ public class ExcursionService {
                 excursion.setPrice(message.getPrice());
                 excursion.setStartDate(message.getStartDate());
                 excursion.setEndDate(message.getEndDate());
+                if (message.getLocationName() != null) excursion.setLocationName(message.getLocationName());
+                if (message.getLatitude()     != null) excursion.setLatitude(message.getLatitude());
+                if (message.getLongitude()    != null) excursion.setLongitude(message.getLongitude());
                 if (message.getPresenceIds() != null && !message.getPresenceIds().isEmpty()) {
                     List<GroupMember> members = groupMemberRepository.findByIdInAndGroupId(message.getPresenceIds(), groupId);
                     if (members.size() != message.getPresenceIds().size()) {
@@ -81,6 +84,9 @@ public class ExcursionService {
                 if (message.getPrice() != null) excursion.setPrice(message.getPrice());
                 if (message.getStartDate() != null) excursion.setStartDate(message.getStartDate());
                 if (message.getEndDate() != null) excursion.setEndDate(message.getEndDate());
+                if (message.getLocationName() != null) excursion.setLocationName(message.getLocationName());
+                if (message.getLatitude()     != null) excursion.setLatitude(message.getLatitude());
+                if (message.getLongitude()    != null) excursion.setLongitude(message.getLongitude());
                 if (message.getPresenceIds() != null) {
                     List<GroupMember> members = groupMemberRepository.findByIdInAndGroupId(message.getPresenceIds(), groupId);
                     if (members.size() != message.getPresenceIds().size()) {

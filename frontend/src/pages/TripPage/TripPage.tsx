@@ -7,19 +7,28 @@ import { TripPageExcursions } from "./TripPageExcursions";
 import { TripPageMap } from "./TripPageMap";
 import { getTripById } from "@/services/TripService";
 import type { Trip } from "@/types/trip";
+import type { Flight } from "@/types/flight";
+import type { Excursion } from "@/types/trip";
 
 export function TripPage() {
   const { id } = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [activeStep, setActiveStep] = useState(1);
+  const [liveFlights, setLiveFlights] = useState<Flight[]>([]);
+  const [liveExcursions, setLiveExcursions] = useState<Excursion[]>([]);
 
   useEffect(() => {
     if (!id) return;
     setIsLoading(true);
     setError(false);
     getTripById(Number(id))
-      .then(setTrip)
+      .then((t) => {
+        setTrip(t);
+        setLiveFlights(t.flights ?? []);
+        setLiveExcursions(t.excursions ?? []);
+      })
       .catch(() => setError(true))
       .finally(() => setIsLoading(false));
   }, [id]);
@@ -74,11 +83,20 @@ export function TripPage() {
               members={trip.group.members}
               initialFlights={trip.flights ?? []}
               initialExcursions={trip.excursions ?? []}
+              activeStep={activeStep}
+              onStepChange={setActiveStep}
+              onFlightsChange={setLiveFlights}
+              onExcursionsChange={setLiveExcursions}
             />
           </div>
           {/* Map — fills remaining height, hidden on mobile */}
-          <div className="hidden lg:block lg:w-42/100 shrink-0">
-            <TripPageMap />
+          <div className="hidden lg:block lg:w-50/100 shrink-0">
+            <TripPageMap
+              flights={liveFlights}
+              excursions={liveExcursions}
+              activeStep={activeStep}
+              onStepChange={setActiveStep}
+            />
           </div>
         </div>
       </SidebarInset>
